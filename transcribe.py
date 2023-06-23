@@ -82,14 +82,20 @@ def write_file(text, filepath):
         
 
 
-def qa_file(texts):
+def qa_file(filepath):
+    loader = TextLoader(file_path=filepath)
+    data = loader.load()
+    
+    text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
+    texts = text_splitter.split_documents(data)
     
     embeddings = OpenAIEmbeddings()
     db = Chroma.from_documents(texts, embeddings)
     retriever = db.as_retriever(search_type = "similarity", search_kwargs = {"k":5})
+
     chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.5,model = 'gpt-3.5-turbo-16k', openai_api_key=openai_api_key),
                                                                         retriever=retriever)
-    st.session_state['chunked'] = True
+
     def conversational_chat(query):
             
         result = chain({"question": query, "chat_history": st.session_state['history']})
@@ -113,18 +119,22 @@ def qa_file(texts):
 
     with container:
         with st.form(key='my_form', clear_on_submit=True):
+                
             user_input = st.text_input("Query:", placeholder="Talk about your csv data here (:", key='input')
             submit_button = st.form_submit_button(label='Send')
                 
         if submit_button and user_input:
-            output = conversational_chat(user_input)            
+            output = conversational_chat(user_input)
+                
             st.session_state['past'].append(user_input)
             st.session_state['generated'].append(output)
+
     if st.session_state['generated']:
         with response_container:
             for i in range(len(st.session_state['generated'])):
                 message(st.session_state["past"][i], is_user=True, key=str(i) + '_user', avatar_style="big-smile")
                 message(st.session_state["generated"][i], key=str(i),avatar_style="initials", seed = "DTO")
+
 
 def main():
     st.title("DTO Interview Transcription and Summarizer App")
