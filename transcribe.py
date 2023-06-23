@@ -82,11 +82,8 @@ def write_file(text, filepath):
         
 
 
-def qa_file(data):
+def qa_file(texts):
     
-
-    
-        
 
     
     embeddings = OpenAIEmbeddings()
