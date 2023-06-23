@@ -87,14 +87,19 @@ def qa_file(filepath):
     data = loader.load()
     
     text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
-    texts = text_splitter.split_documents(data)
     
-    embeddings = OpenAIEmbeddings()
-    db = Chroma.from_documents(texts, embeddings)
-    retriever = db.as_retriever(search_type = "similarity", search_kwargs = {"k":5})
-
-    chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.5,model = 'gpt-3.5-turbo-16k', openai_api_key=openai_api_key),
-                                                                        retriever=retriever)
+    if 'chained' not in st.session_state: 
+        texts = text_splitter.split_documents(data)
+        
+        st.session_state.chunked = True
+        
+        embeddings = OpenAIEmbeddings()
+        db = Chroma.from_documents(texts, embeddings)
+        retriever = db.as_retriever(search_type = "similarity", search_kwargs = {"k":5})
+        st.write("retrieval chain")
+        chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.5,model = 'gpt-3.5-turbo-16k', openai_api_key=openai_api_key),
+                                                                            retriever=retriever)
+        st.session_state.chained = True
 
     def conversational_chat(query):
             
@@ -143,22 +148,24 @@ def main():
     st.write(uploaded_file)
     if uploaded_file is not None:
         try:
-            # Read the uploaded file
-            with st.spinner("Transcribing file..."):
-                st.info("Reading audio file...")
-                audio_data = uploaded_file.read()
-                # Create an AudioSegment object from the file data
-                audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))
-                st.info("Splitting audio file...")
-                transcript = transcribe_audio(audio_segment)
-            st.success('Transcript completed!!', icon="✅")
-            write_file(transcript, "output.txt")
+            if 'transcript' not in st.session_state: 
+                # Read the uploaded file
+                with st.spinner("Transcribing file..."):
+                    st.info("Reading audio file...")
+                    audio_data = uploaded_file.read()
+                    # Create an AudioSegment object from the file data
+                    audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))
+                    st.info("Splitting audio file...")
+                    transcript = transcribe_audio(audio_segment)
+                    st.session_state.transcript = True
+                st.success('Transcript completed!!', icon="✅")
+                write_file(transcript, "output.txt")
 
-            with st.expander("See Transcript"):
-                st.text_area("Transcript", transcript, height=200)
-            with open('output.txt') as f:
-                ste.download_button('Download txt file for future use', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
-            qa_file("output.txt")
+                with st.expander("See Transcript"):
+                    st.text_area("Transcript", transcript, height=200)
+                with open('output.txt') as f:
+                    ste.download_button('Download txt file for future use', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
+                qa_file("output.txt")
         except Exception as e :
             st.exception(f"An error occurred: {e}")
             
