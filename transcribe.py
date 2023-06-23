@@ -156,9 +156,10 @@ def main():
                     ste.download_button('Download txt file', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
                 st.info("Q&A Chat will load below")
                 if st.session_state.transcript !=""  and st.session_state['chunked'] == False:
-                    data = st.session_state.transcript
+                    loader = TextLoader(file_path="output.txt")
+                    data = loader.load()
                     text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
-                    texts = text_splitter.create_documents(data)     
+                    texts = text_splitter.split_documents(data)     
                     qa_file(texts)    
             
         if uploaded_txt_file is not None:
