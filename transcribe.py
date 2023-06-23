@@ -137,7 +137,6 @@ def main():
     uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
     uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"]) 
     st.write(uploaded_file)
-    st.write("Text file: " + uploaded_txt_file)
     try:
         if uploaded_file is not None and st.session_state.transcript =="":
         
