@@ -1,6 +1,7 @@
 
 
 import streamlit as st
+import streamlit_ext as ste
 import openai
 import os
 import io
@@ -153,7 +154,7 @@ def main():
             st.success('Transcript completed!!', icon="✅")
             write_file(transcript, "output.txt")
             with open('output.txt') as f:
-                st.sidebar.download_button('Download txt file for future use', f)  # Defaults to 'text/plain'
+                ste.download_button('Download txt file for future use', f)  # Defaults to 'text/plain'
             with st.expander("See Transcript"):
                 st.text_area("Transcript", transcript, height=200)
             qa_file("output.txt")
