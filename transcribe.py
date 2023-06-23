@@ -39,7 +39,6 @@ if openai_api_key is None:
 llm = OpenAI(temperature=0.1)
 openai.Model.list()
 
-transcript = ""
 
 def transcribe_audio(audio_segment):
     chunk_length_ms = 20 * 60 * 1000
@@ -141,7 +140,7 @@ def qa_file(filepath):
 
 
 def main():
-   
+    transcript = ""
     st.write("resetting")
     st.title("DTO Interview Transcription and Summarizer App")
 
