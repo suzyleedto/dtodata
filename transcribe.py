@@ -159,7 +159,7 @@ def main():
                 st.text_area("Transcript", transcript, height=200)
             with open('output.txt') as f:
                 ste.download_button('Download txt file', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
-            st.warning("Upload txt file in side-bar if you want to continue with Q&A")
+            st.info("Q&A Chat will load below")
         except Exception as e :
             st.exception(f"An error occurred: {e}")
     
@@ -170,7 +170,6 @@ def main():
         qa_file(texts)    
     else:       
         uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])  
-          
         if uploaded_txt_file is not None :
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 tmp_file.write(uploaded_txt_file.getvalue())
