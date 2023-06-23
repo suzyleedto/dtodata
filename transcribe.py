@@ -85,7 +85,7 @@ def qa_file(filepath):
     loader = TextLoader(file_path=filepath)
     data = loader.load()
     
-    text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
+    text_splitter = CharacterTextSplitter(chunk_size = 1000, chunk_overlap = 100,separator="?")
     
    
     texts = text_splitter.split_documents(data)
