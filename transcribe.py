@@ -50,7 +50,7 @@ def transcribe_audio(audio_segment):
         # Export the chunk to a temporary WAV file
         temp_file = f"temp_chunk_{i}.mp3"
         chunk.export(temp_file, format="mp3")
-        st.info(f"sending to openai chunk {i+1} out of {len(chunks)}")
+        st.write(f"sending to openai chunk {i+1} out of {len(chunks)}")
         audio_file= open(temp_file, "rb")
         transcript = openai.Audio.transcribe("whisper-1", file = audio_file,prompt = "This audio contains an interview with Filipino and English on the topic of usage of data.")
         transcript_all =  transcript_all+transcript.text   
@@ -144,11 +144,14 @@ def main():
     transcript = ""
     st.title("DTO Interview Transcription and Summarizer App")
 
-    uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
-    st.write(uploaded_file)
+    uploader_container = st.container()
+    with uploader_container:
+        uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
+    
     container = st.container()
     with container:
         if uploaded_file is not None:
+            st.write(uploaded_file)
             try:
                     # Read the uploaded file
                 if transcript is not None:
