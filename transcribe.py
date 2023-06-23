@@ -141,7 +141,7 @@ def qa_file(filepath):
 
 
 def main():
-    transcript = ""
+ 
     st.title("DTO Interview Transcription and Summarizer App")
 
     uploader_container = st.container()
@@ -154,7 +154,7 @@ def main():
             st.write(uploaded_file)
             try:
                     # Read the uploaded file
-                if transcript is not None:
+                if transcript != "":
                     with st.spinner("Transcribing file..."):
                         st.write("Reading audio file...")
                         audio_data = uploaded_file.read()
@@ -185,4 +185,5 @@ def main():
 
 
 if __name__ == "__main__":
+    transcript = ""
     main()
