@@ -2,3 +2,4 @@ streamlit
 openai
 pydub
 langchain
+streamlit_chat
