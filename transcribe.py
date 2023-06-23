@@ -141,7 +141,7 @@ def main():
 
     uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
     st.write(uploaded_file)
-    if uploaded_file is not None and transcript is None:
+    if uploaded_file is not None:
         try:
             # Read the uploaded file
             with st.spinner("Transcribing file..."):
