@@ -146,28 +146,30 @@ def main():
 
     uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
     st.write(uploaded_file)
-    if uploaded_file is not None:
-        try:
-                # Read the uploaded file
-            if transcript is not None:
-                with st.spinner("Transcribing file..."):
-                    st.write("Reading audio file...")
-                    audio_data = uploaded_file.read()
-                    # Create an AudioSegment object from the file data
-                    audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))
-                    st.write("Splitting audio file...")
-                    transcript = transcribe_audio(audio_segment)
-                    #st.session_state.transcript = True
-                st.success('Transcript completed!!', icon="✅")
-                write_file(transcript, "output.txt")
+    container = st.container()
+    with container:
+        if uploaded_file is not None:
+            try:
+                    # Read the uploaded file
+                if transcript is not None:
+                    with st.spinner("Transcribing file..."):
+                        st.write("Reading audio file...")
+                        audio_data = uploaded_file.read()
+                        # Create an AudioSegment object from the file data
+                        audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))
+                        st.write("Splitting audio file...")
+                        transcript = transcribe_audio(audio_segment)
+                        #st.session_state.transcript = True
+                    st.success('Transcript completed!!', icon="✅")
+                    write_file(transcript, "output.txt")
 
-                with st.expander("See Transcript"):
-                    st.text_area("Transcript", transcript, height=200)
-                with open('output.txt') as f:
-                    ste.download_button('Download txt file for future use', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
-            qa_file("output.txt")            
-        except Exception as e :
-            st.exception(f"An error occurred: {e}")
+                    with st.expander("See Transcript"):
+                        st.text_area("Transcript", transcript, height=200)
+                    with open('output.txt') as f:
+                        ste.download_button('Download txt file for future use', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
+                    qa_file("output.txt")            
+            except Exception as e :
+                st.exception(f"An error occurred: {e}")
             
     uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])         
     if uploaded_txt_file is not None :
