@@ -84,15 +84,12 @@ def write_file(text, filepath):
 
 def qa_file(texts):
     
-
-    
     embeddings = OpenAIEmbeddings()
     db = Chroma.from_documents(texts, embeddings)
     retriever = db.as_retriever(search_type = "similarity", search_kwargs = {"k":5})
-
     chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.5,model = 'gpt-3.5-turbo-16k', openai_api_key=openai_api_key),
                                                                         retriever=retriever)
-
+    st.session_state['chunked'] = True
     def conversational_chat(query):
             
         result = chain({"question": query, "chat_history": st.session_state['history']})
@@ -116,16 +113,13 @@ def qa_file(texts):
 
     with container:
         with st.form(key='my_form', clear_on_submit=True):
-                
             user_input = st.text_input("Query:", placeholder="Talk about your csv data here (:", key='input')
             submit_button = st.form_submit_button(label='Send')
                 
         if submit_button and user_input:
-            output = conversational_chat(user_input)
-                
+            output = conversational_chat(user_input)            
             st.session_state['past'].append(user_input)
             st.session_state['generated'].append(output)
-
     if st.session_state['generated']:
         with response_container:
             for i in range(len(st.session_state['generated'])):
@@ -135,6 +129,7 @@ def qa_file(texts):
 def main():
     st.session_state['audio_file'] = None
     st.session_state['transcript'] = ""
+    st.session_state['chunked'] = False
     
     
     st.title("DTO Interview Transcription and Summarizer App")
@@ -163,14 +158,14 @@ def main():
         except Exception as e :
             st.exception(f"An error occurred: {e}")
     
-    if st.session_state.transcript !="":
+    if st.session_state.transcript !=""  and st.session_state['chunked'] == False:
         data = st.session_state.transcript
         text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
         texts = text_splitter.create_documents(data)     
         qa_file(texts)    
     else:       
         uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])  
-        if uploaded_txt_file is not None :
+        if uploaded_txt_file is not None and st.session_state['chunked'] == False:
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 tmp_file.write(uploaded_txt_file.getvalue())
                 tmp_file_path = tmp_file.name
