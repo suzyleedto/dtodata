@@ -82,9 +82,9 @@ def write_file(text, filepath):
         
 
 
-def qa_file(filepath):
-    loader = TextLoader(file_path=filepath)
-    data = loader.load()
+def qa_file(data):
+    
+
     
         
     text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
@@ -137,6 +137,10 @@ def qa_file(filepath):
                 message(st.session_state["generated"][i], key=str(i),avatar_style="initials", seed = "DTO")
 
 def main():
+    st.session_state['audio_file'] = None
+    st.session_state['txt_transcript'] = ""
+    
+    
     st.title("DTO Interview Transcription and Summarizer App")
 
     uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
@@ -147,29 +151,38 @@ def main():
             with st.spinner("Transcribing file..."):
                 st.info("Reading audio file...")
                 audio_data = uploaded_file.read()
+                st.session_state['audio_file'] = audio_data
                 # Create an AudioSegment object from the file data
                 audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))
                 st.info("Splitting audio file...")
                 transcript = transcribe_audio(audio_segment)
             st.success('Transcript completed!!', icon="✅")
             write_file(transcript, "output.txt")
-
+            st.session_state['transcript_txt'] = transcript
             with st.expander("See Transcript"):
                 st.text_area("Transcript", transcript, height=200)
             with open('output.txt') as f:
                 ste.download_button('Download txt file', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
             st.warning("Upload txt file in side-bar if you want to continue with Q&A")
+            st.session_state.transcript = transcript
         except Exception as e :
             st.exception(f"An error occurred: {e}")
-            
-    uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])         
-    if uploaded_txt_file is not None :
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-            tmp_file.write(uploaded_txt_file.getvalue())
-            tmp_file_path = tmp_file.name
-            qa_file(tmp_file_path)
+    
+    if st.session_state.transcript !="":
+        data = st.session_state.transcript
+    else:       
+        uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])         
+        if uploaded_txt_file is not None :
+            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                tmp_file.write(uploaded_txt_file.getvalue())
+                tmp_file_path = tmp_file.name
+               
+                loader = TextLoader(file_path=filepath)
+                data = loader.load()
 
+    qa_file(data)
         
+    
 
 if __name__ == "__main__":
     main()
