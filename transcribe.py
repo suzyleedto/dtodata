@@ -171,9 +171,9 @@ def main():
                 tmp_file_path = tmp_file.name
                 loader = TextLoader(file_path=tmp_file_path)
                 data = loader.load()
-                st.session_state['transcript'] = data
                 text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
                 texts = text_splitter.split_documents(data)     
+                st.session_state['transcript'] = texts
                 qa_file(texts)
 
  
