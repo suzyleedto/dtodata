@@ -30,10 +30,10 @@ import tempfile
 
 
 openai.organization = "org-ydtCQcRROzj3YuGKoh4NtXEV"
-#openai_api_key = st.secrets["OPENAI_API_KEY"]
-#openai.api_key = st.secrets["OPENAI_API_KEY"]
-openai.api_key = os.environ['OPENAI_API_KEY'] 
-openai_api_key = os.environ['OPENAI_API_KEY'] 
+openai_api_key = st.secrets["OPENAI_API_KEY"]
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+#openai.api_key = os.environ['OPENAI_API_KEY'] 
+#openai_api_key = os.environ['OPENAI_API_KEY'] 
 llm = OpenAI(temperature=0.1)
 openai.Model.list()
 
@@ -95,7 +95,7 @@ def qa_file(filepath):
         db = Chroma.from_documents(texts, embeddings)
         retriever = db.as_retriever(search_type = "similarity", search_kwargs = {"k":5})
         print("splitting")
-        chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.2,model = 'gpt-3.5-turbo', openai_api_key=openai_api_key),
+        chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.3,model = 'gpt-3.5-turbo', openai_api_key=openai_api_key),
                                                                                 retriever=retriever)
     
         st.session_state['chain'] = chain 
@@ -142,18 +142,14 @@ def qa_file(filepath):
 def main():
     transcript = ""
     st.title("DTO Interview Transcription and Summarizer App")
-
-    uploader_container = st.container()
-    with uploader_container:
-        uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
-    
-    container = st.container()
-    with container:
-        if uploaded_file is not None:
+    option = st.sidebar.selectbox('What would you like to do?',('Upload an Audio File', 'Upload a Text File'))
+    if option == 'Upload an Audio File':
+       uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
+       if uploaded_file is not None:
             st.write(uploaded_file)
             try:
                     # Read the uploaded file
-                if transcript == "":
+                if 'transcript' not in st.session_state:
                     with st.spinner("Transcribing file..."):
                         st.write("Reading audio file...")
                         audio_data = uploaded_file.read()
@@ -161,24 +157,23 @@ def main():
                         audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))
                         st.write("Splitting audio file...")
                         transcript = transcribe_audio(audio_segment)
-                        #st.session_state.transcript = True
+                        st.session_state.transcript = transcript
                     st.success('Transcript completed!!', icon="✅")
                     write_file(transcript, "output.txt")
-
                     with st.expander("See Transcript"):
                         st.text_area("Transcript", transcript, height=200)
                     with open('output.txt') as f:
                         ste.download_button('Download txt file for future use', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
-                    qa_file("output.txt")            
+                qa_file("output.txt")            
             except Exception as e :
                 st.exception(f"An error occurred: {e}")
-            
-    uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])         
-    if uploaded_txt_file is not None :
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-            tmp_file.write(uploaded_txt_file.getvalue())
-            tmp_file_path = tmp_file.name
-            qa_file(tmp_file_path)
+    elif option == 'Upload a Text File':        
+        uploaded_txt_file = st.sidebar.file_uploader("Upload a text file with a transcript", type=["txt", "doc","docx"])         
+        if uploaded_txt_file is not None :
+            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                tmp_file.write(uploaded_txt_file.getvalue())
+                tmp_file_path = tmp_file.name
+                qa_file(tmp_file_path)
 
 
 
