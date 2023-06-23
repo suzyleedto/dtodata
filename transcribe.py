@@ -87,8 +87,7 @@ def qa_file(data):
 
     
         
-    text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
-    texts = text_splitter.split_documents(data)
+
     
     embeddings = OpenAIEmbeddings()
     db = Chroma.from_documents(texts, embeddings)
@@ -169,7 +168,9 @@ def main():
     
     if st.session_state.transcript !="":
         data = st.session_state.transcript
-        qa_file(data)
+        text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
+        texts = text_splitter.create_documents(data)     
+        qa_file(texts)    
     else:       
         uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])  
           
@@ -179,8 +180,10 @@ def main():
                 tmp_file_path = tmp_file.name
                 loader = TextLoader(file_path=tmp_file_path)
                 data = loader.load()
-                st.session_state['transcript'] = data     
-                qa_file(data)
+                st.session_state['transcript'] = data
+                text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
+                texts = text_splitter.split_documents(data)     
+                qa_file(texts)
 
  
         
