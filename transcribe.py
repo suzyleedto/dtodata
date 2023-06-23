@@ -155,7 +155,7 @@ def main():
                 st.text_area("Transcript", transcript, height=200)
             write_file(transcript, "output.txt")
             with open('output.txt') as f:
-                st.download_button('Download txt file for future use', f)  # Defaults to 'text/plain'
+                st.sidebar.download_button('Download txt file for future use', f)  # Defaults to 'text/plain'
             qa_file("output.txt")
         except Exception as e :
             st.exception(f"An error occurred: {e}")

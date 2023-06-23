@@ -5,3 +5,4 @@ langchain
 streamlit_chat
 chromadb
 ffmpeg-python
+tiktoken
