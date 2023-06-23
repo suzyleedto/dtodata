@@ -130,8 +130,6 @@ def main():
     st.session_state['audio_file'] = None
     st.session_state['transcript'] = ""
     st.session_state['chunked'] = False
-    
-    
     st.title("DTO Interview Transcription and Summarizer App")
 
     uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
@@ -167,14 +165,14 @@ def main():
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 tmp_file.write(uploaded_txt_file.getvalue())
                 tmp_file_path = tmp_file.name
-                loader = TextLoader(file_path=tmp_file_path)
-                data = loader.load()
-                st.write("Chunking")
-                text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
-                texts = text_splitter.split_documents(data)     
-                st.session_state['transcript'] = texts
-                st.write("Done Chunking")
-                qa_file(texts)
+            loader = TextLoader(file_path=tmp_file_path)
+            data = loader.load()
+            st.write("Chunking")
+            text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
+            texts = text_splitter.split_documents(data)     
+            st.session_state['transcript'] = texts
+            st.write("Done Chunking")
+            qa_file(texts)
                         
     except Exception as e :
             st.exception(f"An error occurred: {e}")
