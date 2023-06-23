@@ -163,7 +163,7 @@ def main():
                     texts = text_splitter.create_documents(data)     
                     qa_file(texts)    
             
-        if uploaded_txt_file is not None and st.session_state['chunked'] == False:
+        if uploaded_txt_file is not None:
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 tmp_file.write(uploaded_txt_file.getvalue())
                 tmp_file_path = tmp_file.name
