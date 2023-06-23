@@ -122,7 +122,7 @@ def qa_file(filepath):
     container = st.container()
 
     with container:
-        with st.form(key='my_form'):
+        with st.form(key='my_form', clear_on_submit=True):
                 
             user_input = st.text_input("Query:", placeholder="Talk about your csv data here (:", key='input')
             submit_button = st.form_submit_button(label='Send')
