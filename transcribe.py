@@ -145,7 +145,7 @@ def main():
 
     uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
     st.write(uploaded_file)
-    if uploaded_file is not None:
+    if uploaded_file is not None and st.session_state.transcript =="":
         try:
             # Read the uploaded file
             with st.spinner("Transcribing file..."):
@@ -169,16 +169,20 @@ def main():
     
     if st.session_state.transcript !="":
         data = st.session_state.transcript
+        qa_file(data)
     else:       
-        uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])         
+        uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])  
+          
         if uploaded_txt_file is not None :
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 tmp_file.write(uploaded_txt_file.getvalue())
                 tmp_file_path = tmp_file.name
                 loader = TextLoader(file_path=tmp_file_path)
                 data = loader.load()
+                st.session_state['transcript'] = data     
+                qa_file(data)
 
-    qa_file(data)
+ 
         
     
 
