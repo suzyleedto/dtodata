@@ -3,3 +3,4 @@ openai
 pydub
 langchain
 streamlit_chat
+chromadb
