@@ -147,7 +147,6 @@ def main():
     st.write(uploaded_file)
     if uploaded_file is not None:
         try:
-            if 'transcript' not in st.session_state: 
                 # Read the uploaded file
                 with st.spinner("Transcribing file..."):
                     st.info("Reading audio file...")
@@ -156,7 +155,7 @@ def main():
                     audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))
                     st.info("Splitting audio file...")
                     transcript = transcribe_audio(audio_segment)
-                    st.session_state.transcript = True
+                    #st.session_state.transcript = True
                 st.success('Transcript completed!!', icon="✅")
                 write_file(transcript, "output.txt")
 
