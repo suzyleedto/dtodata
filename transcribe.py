@@ -138,7 +138,7 @@ def qa_file(data):
 
 def main():
     st.session_state['audio_file'] = None
-    st.session_state['txt_transcript'] = ""
+    st.session_state['transcript'] = ""
     
     
     st.title("DTO Interview Transcription and Summarizer App")
@@ -158,13 +158,12 @@ def main():
                 transcript = transcribe_audio(audio_segment)
             st.success('Transcript completed!!', icon="✅")
             write_file(transcript, "output.txt")
-            st.session_state['transcript_txt'] = transcript
+            st.session_state['transcript'] = transcript
             with st.expander("See Transcript"):
                 st.text_area("Transcript", transcript, height=200)
             with open('output.txt') as f:
                 ste.download_button('Download txt file', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
             st.warning("Upload txt file in side-bar if you want to continue with Q&A")
-            st.session_state.transcript = transcript
         except Exception as e :
             st.exception(f"An error occurred: {e}")
     
@@ -176,8 +175,7 @@ def main():
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 tmp_file.write(uploaded_txt_file.getvalue())
                 tmp_file_path = tmp_file.name
-               
-                loader = TextLoader(file_path=filepath)
+                loader = TextLoader(file_path=tmp_file_path)
                 data = loader.load()
 
     qa_file(data)
