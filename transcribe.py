@@ -135,36 +135,34 @@ def main():
     st.title("DTO Interview Transcription and Summarizer App")
 
     uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
+    uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"]) 
     st.write(uploaded_file)
-    if uploaded_file is not None and st.session_state.transcript =="":
-        try:
-            # Read the uploaded file
-            with st.spinner("Transcribing file..."):
-                st.info("Reading audio file...")
-                audio_data = uploaded_file.read()
-                st.session_state['audio_file'] = audio_data
-                # Create an AudioSegment object from the file data
-                audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))
-                st.info("Splitting audio file...")
-                transcript = transcribe_audio(audio_segment)
-            st.success('Transcript completed!!', icon="✅")
-            write_file(transcript, "output.txt")
-            st.session_state['transcript'] = transcript
-            with st.expander("See Transcript"):
-                st.text_area("Transcript", transcript, height=200)
-            with open('output.txt') as f:
-                ste.download_button('Download txt file', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
-            st.info("Q&A Chat will load below")
-        except Exception as e :
-            st.exception(f"An error occurred: {e}")
-    
-    if st.session_state.transcript !=""  and st.session_state['chunked'] == False:
-        data = st.session_state.transcript
-        text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
-        texts = text_splitter.create_documents(data)     
-        qa_file(texts)    
-    else:       
-        uploaded_txt_file = st.sidebar.file_uploader("OR\n\n\nUpload a text file with a transcript", type=["txt", "doc","docx"])  
+    try:
+        if uploaded_file is not None and st.session_state.transcript =="":
+        
+                # Read the uploaded file
+                with st.spinner("Transcribing file..."):
+                    st.info("Reading audio file...")
+                    audio_data = uploaded_file.read()
+                    st.session_state['audio_file'] = audio_data
+                    # Create an AudioSegment object from the file data
+                    audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))
+                    st.info("Splitting audio file...")
+                    transcript = transcribe_audio(audio_segment)
+                st.success('Transcript completed!!', icon="✅")
+                write_file(transcript, "output.txt")
+                st.session_state['transcript'] = transcript
+                with st.expander("See Transcript"):
+                    st.text_area("Transcript", transcript, height=200)
+                with open('output.txt') as f:
+                    ste.download_button('Download txt file', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
+                st.info("Q&A Chat will load below")
+                if st.session_state.transcript !=""  and st.session_state['chunked'] == False:
+                    data = st.session_state.transcript
+                    text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
+                    texts = text_splitter.create_documents(data)     
+                    qa_file(texts)    
+            
         if uploaded_txt_file is not None and st.session_state['chunked'] == False:
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 tmp_file.write(uploaded_txt_file.getvalue())
@@ -175,6 +173,10 @@ def main():
                 texts = text_splitter.split_documents(data)     
                 st.session_state['transcript'] = texts
                 qa_file(texts)
+                        
+    except Exception as e :
+            st.exception(f"An error occurred: {e}")
+    
 
  
         
