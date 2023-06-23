@@ -30,12 +30,10 @@ import tempfile
 
 
 openai.organization = "org-ydtCQcRROzj3YuGKoh4NtXEV"
-openai_api_key = st.secrets["OPENAI_API_KEY"]
-openai.api_key = st.secrets["OPENAI_API_KEY"]
-
-if openai_api_key is None:
-    openai.api_key = os.environ['OPENAI_API_KEY'] 
-    openai_api_key = os.environ['OPENAI_API_KEY'] 
+#openai_api_key = st.secrets["OPENAI_API_KEY"]
+#openai.api_key = st.secrets["OPENAI_API_KEY"]
+openai.api_key = os.environ['OPENAI_API_KEY'] 
+openai_api_key = os.environ['OPENAI_API_KEY'] 
 llm = OpenAI(temperature=0.1)
 openai.Model.list()
 
@@ -120,7 +118,7 @@ def qa_file(filepath):
     #container for the user's text input
     container = st.container()
 
-    with container:
+    with st.spinner('Calculating...'):
         with st.form(key='my_form', clear_on_submit=True):
                 
             user_input = st.text_input("Query:", placeholder="Talk about your csv data here (:", key='input')
