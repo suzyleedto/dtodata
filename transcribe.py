@@ -88,18 +88,17 @@ def qa_file(filepath):
     
     text_splitter = CharacterTextSplitter(chunk_size = 1500, chunk_overlap = 100,separator="?")
     
-    if 'chained' not in st.session_state: 
-        texts = text_splitter.split_documents(data)
+   
+    texts = text_splitter.split_documents(data)
         
-        st.session_state.chunked = True
         
-        embeddings = OpenAIEmbeddings()
-        db = Chroma.from_documents(texts, embeddings)
-        retriever = db.as_retriever(search_type = "similarity", search_kwargs = {"k":5})
-        st.write("retrieval chain")
-        chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.5,model = 'gpt-3.5-turbo', openai_api_key=openai_api_key),
+    embeddings = OpenAIEmbeddings()
+    db = Chroma.from_documents(texts, embeddings)
+    retriever = db.as_retriever(search_type = "similarity", search_kwargs = {"k":5})
+    st.write("retrieval chain")
+    chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.5,model = 'gpt-3.5-turbo', openai_api_key=openai_api_key),
                                                                             retriever=retriever)
-        st.session_state.chained = True
+   
 
     def conversational_chat(query):
             
@@ -144,7 +143,7 @@ def qa_file(filepath):
 def main():
     st.title("DTO Interview Transcription and Summarizer App")
 
-    uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
+    uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"], on_)
     st.write(uploaded_file)
     if uploaded_file is not None:
         try:
