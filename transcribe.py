@@ -31,6 +31,9 @@ import tempfile
 openai.organization = "org-ydtCQcRROzj3YuGKoh4NtXEV"
 openai.api_key = os.environ['OPENAI_API_KEY'] 
 open_api_key = os.environ['OPENAI_API_KEY'] 
+if open_api_key is None:
+    openai_api_key = st.secrets["OPENAI_API_KEY"]
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
 llm = OpenAI(temperature=0.1)
 openai.Model.list()
 
