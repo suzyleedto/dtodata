@@ -141,6 +141,7 @@ def qa_file(filepath):
 
 
 def main():
+    transcript = ""
     st.title("DTO Interview Transcription and Summarizer App")
 
     uploaded_file = st.sidebar.file_uploader("Upload an audio file for transcription", type=["wav", "mp3", "flac", "m4a"])
