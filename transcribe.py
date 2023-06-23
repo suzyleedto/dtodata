@@ -1,3 +1,5 @@
+
+
 import streamlit as st
 import openai
 import os
@@ -27,9 +29,8 @@ import tempfile
 
 
 openai.organization = "org-ydtCQcRROzj3YuGKoh4NtXEV"
-openai.api_key = "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"
-open_api_key = openai.api_key 
-os.environ['OPENAI_API_KEY'] = open_api_key
+openai.api_key = os.environ['OPENAI_API_KEY'] 
+open_api_key = os.environ['OPENAI_API_KEY'] 
 llm = OpenAI(temperature=0.1)
 openai.Model.list()
 
