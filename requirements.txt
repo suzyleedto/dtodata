@@ -1,7 +1,5 @@
-
 streamlit
 openai
 pydub
 langchain
 tempfile
-streamlit chat
