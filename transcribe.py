@@ -164,7 +164,7 @@ def main():
                         st.text_area("Transcript", transcript, height=200)
                     with open('output.txt') as f:
                         ste.download_button('Download txt file for future use', data = f, file_name = "transcript.txt")  # Defaults to 'text/plain'
-                    st.info("To transcribe, select Upload a Text File from the dropdown", icon = "👈")
+                    st.info("To summarize, select Upload a Text File from the dropdown", icon = "👈")
             except Exception as e :
                 st.exception(f"An error occurred: {e}")
     elif option == 'Upload a Text File':        
