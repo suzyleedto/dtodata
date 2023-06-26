@@ -95,7 +95,7 @@ def qa_file(filepath):
         db = Chroma.from_documents(texts, embeddings)
         retriever = db.as_retriever(search_type = "similarity", search_kwargs = {"k":5})
         print("splitting")
-        chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.0,model = 'gpt-3.5-turbo-16k', openai_api_key=openai_api_key),
+        chain = ConversationalRetrievalChain.from_llm(llm = ChatOpenAI(temperature=0.1,model = 'gpt-3.5-turbo-16k', openai_api_key=openai_api_key),
                                                                                 retriever=retriever)
     
         st.session_state['chain'] = chain 
