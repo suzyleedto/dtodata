@@ -7,3 +7,4 @@ chromadb
 ffmpeg-python
 tiktoken
 streamlit-ext
+pysqlite3-binary

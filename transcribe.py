@@ -7,6 +7,8 @@ import os
 import io
 import csv
 from pydub import AudioSegment 
+import pysqlite3
+import sys 
 
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.docstore.document import Document
@@ -28,7 +30,7 @@ from langchain import PromptTemplate
 import tempfile
 
 
-
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 openai.organization = "org-ydtCQcRROzj3YuGKoh4NtXEV"
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
