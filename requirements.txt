@@ -7,3 +7,4 @@ chromadb
 ffmpeg-python
 tiktoken
 streamlit-ext
+sqlite3 >= 3.35.0.
