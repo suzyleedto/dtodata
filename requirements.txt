@@ -1,5 +1,5 @@
 streamlit
-openai
+openai==v0.28.1
 pydub
 langchain
 streamlit_chat
