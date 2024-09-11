@@ -2,6 +2,7 @@ streamlit
 openai==v0.28.1
 pydub
 langchain
+langchain-community
 streamlit_chat
 chromadb
 ffmpeg-python
